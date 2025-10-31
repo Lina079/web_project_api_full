@@ -28,9 +28,23 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndDelete(req.params.cardId)
-    .orFail(() => { throw notFound(); })
-    .then((card) => res.send(card))
+  const { cardId } = req.params;
+  Card.findById(cardId)
+    .orFail(() => {
+      const err = new Error('Tarjeta no encontrada');
+      err.statusCode = 404;
+      throw err;
+    })
+    .then((card) => {
+      // Verificar si el usuario es el propietario de la tarjeta
+      if (String(card.owner) !== req.user._id) {
+        const err = new Error('No tienes permiso para eliminar esta tarjeta');
+        err.statusCode = 403;
+        throw err;
+      }
+      return card.deleteOne();
+    })
+    .then(() => res.send({ message: 'Tarjeta eliminada'}))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(400).send({ message: 'ID de tarjeta no válido' });
@@ -38,9 +52,13 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.statusCode === 404) {
         return res.status(404).send({ message: 'Tarjeta no encontrada' });
       }
+      if (err.statusCode === 403) {
+        return res.status(403).send({ message: 'No tienes permiso para eliminar esta tarjeta' });
+      }
       return next(err);
       });
     };
+
 
 module.exports.likeCard = (req, res, next) => {
   const { cardId } = req.params;

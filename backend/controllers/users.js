@@ -33,6 +33,7 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = async (req, res, next) => {
   try {
+    console.log('[createUser] body:', req.body);
     const {
       name, about, avatar, email, password,
     } = req.body;
@@ -43,7 +44,7 @@ module.exports.createUser = async (req, res, next) => {
 
     const hash = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const newUser = await User.create({
       name,
       about,
       avatar,
@@ -51,11 +52,16 @@ module.exports.createUser = async (req, res, next) => {
       password: hash,
     });
 
-    const data = user.toObject();
+    const data = newUser.toObject();
     delete data.password;
-
     return res.status(201).send(data);
   } catch (err) {
+    console.error('[createUser][error]:', {
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      stack: err.stack,
+    });
     if (err.code === 11000) {
       return res.status(409).send({ message: 'El email ya está en uso' });
     }
@@ -148,7 +154,19 @@ module.exports.login = async (req, res, next) => {
   }
 };
 
-
-
-
-
+module.exports.getCurrentUser = (req, res, next) => {
+  const userId = req.user._id;
+  return User.findById(userId)
+    .orFail(() => {
+      const err = new Error('Usuario no encontrado');
+      err.statusCode = 404;
+      throw err;
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'ID de usuario no válido' });
+      }
+      return next(err);
+    });
+};

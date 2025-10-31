@@ -1,0 +1,62 @@
+const { celebrate, Joi, Segments} = require('celebrate');
+
+const url = Joi.string().uri({ scheme: ['http', 'https' ]});
+
+const signupValidator = celebrate({
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    name: Joi.string().min(2).max(30).optional(),
+    about: Joi.string().min(2).max(30).optional(),
+    avatar: url.optional()
+  }),
+});
+
+const signinValidator = celebrate({
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+});
+
+const userIdParamValidator = celebrate({
+  [Segments.PARAMS]: Joi.object({
+    userId: Joi.string().hex().length(24).required(),
+  }),
+});
+
+const updateProfileValidator = celebrate({
+  [Segments.BODY]: Joi.object({
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
+  }),
+});
+
+const updateAvatarValidator = celebrate({
+  [Segments.BODY]: Joi.object({
+    avatar: url.required(),
+  }),
+});
+
+const createCardValidator = celebrate({
+  [Segments.BODY]: Joi.object({
+    name: Joi.string().min(2).max(30).required(),
+    link: url.required(),
+  }),
+});
+
+const cardIdParamValidator = celebrate({
+  [Segments.PARAMS]: Joi.object({
+    cardId: Joi.string().hex().length(24).required(),
+  }),
+});
+
+module.exports = {
+  signupValidator,
+  signinValidator,
+  userIdParamValidator,
+  updateProfileValidator,
+  updateAvatarValidator,
+  createCardValidator,
+  cardIdParamValidator,
+}
