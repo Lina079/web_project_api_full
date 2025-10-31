@@ -3,10 +3,7 @@ const mongoose = require('mongoose');
 const { createUser, login } = require('./controllers/users');
 const routes = require('./routes');
 const { errors } = require('celebrate');
-const {
-  signupValidator,
-  signinValidator
-} = require('./middlewares/validators');
+const { signupValidator, signinValidator } = require('./validators/auth');
 
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
@@ -15,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
 
 //conexion a MongoDB
 mongoose.connect('mongodb://localhost:27017/aroundb')
@@ -28,10 +26,7 @@ process.exit(1);
 app.post('/signup', signupValidator, createUser);
 app.post('/signin', signinValidator ,login);
 
-
-
 // desde aqui todos requieren autenticación
-
 app.use(auth);
 
 // privadas
