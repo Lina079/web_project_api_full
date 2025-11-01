@@ -54,7 +54,7 @@ module.exports.createUser = async (req, res, next) => {
 
     const data = newUser.toObject();
     delete data.password;
-    return res.status(201).send(data);
+    return res.status(201).send({ data });
   } catch (err) {
     console.error('[createUser][error]:', {
       name: err.name,
@@ -148,7 +148,7 @@ module.exports.login = async (req, res, next) => {
       { expiresIn: '7d' },
     );
 
-    return res.send({ token });
+    return res.status(200).send({ token });
   } catch (err) {
     return next(err);
   }

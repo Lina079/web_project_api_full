@@ -1,6 +1,14 @@
 const { celebrate, Joi, Segments} = require('celebrate');
 
-const url = Joi.string().uri({ scheme: ['http', 'https' ]});
+
+// Validación de URL
+const url = Joi.string().uri({
+  scheme: ['http', 'https'],
+});
+
+//=== Validadores ===//
+
+//Registro
 
 const signupValidator = celebrate({
   [Segments.BODY]: Joi.object({
@@ -25,10 +33,11 @@ const userIdParamValidator = celebrate({
   }),
 });
 
+// Perfil de usuario
 const updateProfileValidator = celebrate({
   [Segments.BODY]: Joi.object({
     name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(200).required(),
   }),
 });
 
@@ -38,6 +47,7 @@ const updateAvatarValidator = celebrate({
   }),
 });
 
+// Tarjetas
 const createCardValidator = celebrate({
   [Segments.BODY]: Joi.object({
     name: Joi.string().min(2).max(30).required(),
@@ -59,4 +69,4 @@ module.exports = {
   updateAvatarValidator,
   createCardValidator,
   cardIdParamValidator,
-}
+};

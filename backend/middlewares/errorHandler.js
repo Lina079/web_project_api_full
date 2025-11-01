@@ -1,27 +1,25 @@
 module.exports = (err, req, res, next) => {
- const statusCode = err.statusCode || 500;
-
-  let message = err.message || 'Error interno del servidor';
+ const { statusCode = 500, message } = err;
 
   if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      message: 'Datos no válidos'
-    });
+    return res.status(400)
+    .send({ message: 'Datos no válidos' });
   }
   if (err.name === 'CastError') {
-    return res.status(400).json({
-      message: 'ID no válido'
-    });
+    return res.status(400)
+    .send({ message: 'ID no válido' });
   }
   if (err.code === 11000) {
-    return res.status(400).json({
-      message: 'Conflicto: registro duplicado'
+    return res.status(409)
+    .send({ message: 'El email ya está registrado'
     });
   }
 
-  if (statusCode === 500) {
-    message = 'Error interno del servidor';
-    console.error('[Unhandled Error]', err);
-  }
-  return res.status(statusCode).json({ message });
+  return res
+  .status(statusCode)
+  .send({
+    message: statusCode === 500
+      ? 'Ha ocurrido un error en el servidor'
+      : message,
+  });
 };
