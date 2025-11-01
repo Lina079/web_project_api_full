@@ -1,4 +1,20 @@
+# Node
+node_modules/
+npm-debug.log
 
 # Logs
 backend/losgs/
+logs/
+
+# Environment files
+.env
+.env.*
+
+# System / editor files
+.DS_Store
+.vscode/
+
+#Buid del frontend
+frontend/build/
+dist/
 
