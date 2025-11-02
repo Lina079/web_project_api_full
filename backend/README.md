@@ -1,122 +1,184 @@
-# Around (Express) — API REST con Node.js + Express
+# Around the U.S. - API BACKEND 🌎
 
-**Stack:** Node.js · Express · MongoDB · Mongoose · Postman · ESLint
+**Stack:** Node.js · Express · MongoDB · Mongoose · Celebrate/Joi · Winston · PM2
 
-## 🧭 Resumen
-Servidor backend que provee la API para la aplicación **Around**, una galería social con usuarios y tarjetas.  
-Implementa un **CRUD completo** para usuarios y tarjetas, **validaciones con Moongoose**, likes/unlikes y **manejo centralizado de errores.**
+## 🧭 Descripción general
+Backeend desaarrollado en **Node.js y Express** como parte del proyecto final del Bootcamp de Desarrollo Web (TripleTen). Provee la API para la aplicación **Around**, una red social tipo galería donde los usuarios pueden compartir lugares e imágenes.  
+
+La Api implementa:
+- Registro y autenticación de usuarios mediante **JWT** y contraseñas cifradas con **bcrypt**.
+- Protección de rutas privadas con middleware de autorización.
+- CRUD completo de usuarios y tarjetas (crear, leer, actualizar, eliminar).
+- Validaciones robustas con **Celebrate/Joi**.
+- Manejo centralizado de errores y logs con **Winston**.
+- Compatibilidad con **CORS** y recuperación automática del servidor mediante **PM2 Crash Test**.
 
 ---
 
 ## ✨ Funcionalidades
 - **Usuarios**
-  - Crear usuario
-  - Consultar todos los usuarios
-  - Consultar usuario por ID
-  - Actualizar información (nombre, bio, avatar)
-  - Manejo de errores id inválido(400), usuario no encontrado (404), validaciones de (400).
+  - Registro (`/signup`) y login (`/signin`).
+  - Consultar todos los usuarios o un usuario específico.
+  - Obtenner información de un usuario autenticado (`/user/me`).
+  - Actualizar información (nombre, bio, avatar).
+  - Protección con token JWT en rutas privadas.
+  - Manejo de errores:
+    - 400 -> datos inválidos
+    - 401 -> token faltante o inválido
+    - 404 -> usuario no encontrado
+    - 409 -> correo electrónico duplicado
 
 - **Tarjetas**
-  - Crear tarjeta (asocia `owner` desde `req.user._id`)
+  - Crear tarjeta (asociada automáticamente al `owner` autenticado).
   - Consultar todas las tarjetas
-  - Eliminar tarjeta por ID
-  - Dar y quitar like (evita duplicados con `$addToSet`)
-  - Manejo de errores: id inválido (400), tarjeta no encontrada (404)
+  - Eliminar tarjeta por ID.
+  - Dar y quitar like.
+  - Manejo de errores: 
+    - 400 -> datos o ID inválido.
+    - 403 -> intento de eliminar tarjeta ajena.
+    - 404 -> tarjeta no encontrada.
 
-- **Middlewares**
-  - **Auth temporal**: inserta `req.user._id` tomando automáticamente un usuario existente de la BD (provisional para este sprint )
-  - **Errores**: 400 / 404 / 500
+## 🧱 Arquitectura del proyecto
+
+- **Node.js + Express:** estructura modular con rutas, controladores y middlewares.  
+- **MongoDB + Mongoose:** definición de esquemas y validaciones de datos.  
+- **Celebrate + Joi:** validación de cuerpo, parámetros y encabezados de solicitud.  
+- **Winston + express-winston:** registro en archivos `requests.log` y `errors.log`.  
+- **PM2 Crash Test:** reinicio automático ante errores no controlados
   
 
 ---
+# Around the U.S. — API Backend 🌎
 
-## 🧱 Arquitectura
-- **Node.js + Express** (rutas/controladores)
-- **MongoDB + Mongoose** (modelos, validaciones yconsultas)
-- **Rutas separadas** para usuarios y tarjetas
-- **Controladores** con lógica de negocio 
-- **Middlewares personalizados** para validación y errores
-- **Linter (ESLint)** para mantener calidad de código
+**Stack:** Node.js · Express · MongoDB · Mongoose · Celebrate/Joi · Winston · JWT · PM2
 
-## 📁 Estructura del proyecto
+---
 
-~~~text
-.
+## 🧭 Descripción general
+
+Backend desarrollado en **Node.js y Express** como parte del **proyecto final del Bootcamp de Desarrollo Web (TripleTen)**.  
+Provee la API para la aplicación **Around**, una red social tipo galería donde los usuarios pueden compartir lugares e imágenes.
+
+La API implementa:
+- Registro y autenticación de usuarios mediante **JWT** y contraseñas cifradas con **bcrypt**.  
+- Protección de rutas privadas con middleware de autorización.  
+- CRUD completo de usuarios y tarjetas (crear, leer, actualizar, eliminar).  
+- Validaciones robustas con **Celebrate/Joi**.  
+- Manejo centralizado de errores y logs con **Winston**.  
+- Compatibilidad con **CORS** y recuperación automática del servidor mediante **PM2 Crash Test**.
+
+---
+
+## ✨ Funcionalidades principales
+
+### 👥 Usuarios
+- Registro (`/signup`) y login (`/signin`).
+- Consultar todos los usuarios o un usuario específico.
+- Obtener información del usuario autenticado (`/users/me`).
+- Actualizar nombre, descripción o avatar.
+- Protección con token JWT en rutas privadas.
+- Manejo de errores:  
+  - 400 → datos inválidos  
+  - 401 → token faltante o inválido  
+  - 404 → usuario no encontrado  
+  - 409 → correo electrónico duplicado  
+
+### 🖼️ Tarjetas
+- Crear tarjeta (asociada automáticamente al `owner` autenticado).  
+- Listar todas las tarjetas.  
+- Dar y quitar “like”.  
+- Eliminar solo si la tarjeta pertenece al usuario autenticado.  
+- Manejo de errores:
+  - 400 → datos o ID inválidos  
+  - 403 → intento de eliminar tarjeta ajena  
+  - 404 → tarjeta no encontrada  
+
+---
+
+## 🧱 Arquitectura del proyecto
+
+- **Node.js + Express:** estructura modular con rutas, controladores y middlewares.  
+- **MongoDB + Mongoose:** definición de esquemas y validaciones de datos.  
+- **Celebrate + Joi:** validación de cuerpo, parámetros y encabezados de solicitud.  
+- **Winston + express-winston:** registro en archivos `requests.log` y `errors.log`.  
+- **PM2 Crash Test:** reinicio automático ante errores no controlados.  
+
+---
+
+## 📂 Estructura del proyecto
+
+```bash
+backend/
 ├── app.js
-├── controllers
+├── controllers/
 │   ├── users.js
 │   └── cards.js
-├── models
+├── middlewares/
+│   ├── auth.js
+│   ├── errorHandler.js
+│   ├── logger.js
+│   └── validators.js
+├── models/
 │   ├── user.js
 │   └── card.js
-├── routes
+├── routes/
 │   ├── index.js
 │   ├── users.js
 │   └── cards.js
-├── .editorconfig
-├── .eslintrc
-├── .gitignore
-├── package.json
-└── README.md
-~~~
+└── logs/
+    ├── requests.log
+    └── errors.log
+
+```
 
 ## 🔌 Endpoints
 Base URL: `http://localhost:3000`
 
-### Usuarios
+## 🧩 Endpoints principales. 
+**Autenticación**
+- **POST** `/signup` 
+  Registra un nuevo usuario.
+- **POST** `/signin`
+  Inicia sesión y devuelve un token JWT.
+
+**Usuarios**
 - **GET** `/users`  
   Devuelve la lista completa de usuarios (200).
+- **GET** `/users/me`
+  Devuelve el perfil del usuario autenticado.
 - **GET** `/users/:userid`  
-  Devuelve un usuario por su `_id`.  
-  - Si **no existe**, responde **404**:
-    ```json
-    { "message": "ID de usuario no encontrado" }
-    ```
-- **POST** `/users/` - crear usuario
-    Body:
-    ```json
-    { "name": "Ada Lovelace", "about": "Mathematician, writer", "avatar":"https://example.com/a.jpg" }
-    ```
-    * 201 creado, 400 si la validación falla
+  Devuelve un usuario por su `_id`.
+- **PATCH** `/users/me`
+  Actualiza nombre y descripción.
+- **PATCH** `/users/me/avatar`
+  Actualizar avatar.
 
-- **PATCH**`/users/me` - actualizar name y about del      usuario autenticado.
-Body:
-```json
-{ "name": "Ada L.", "about": "Math & computing" }
-```
-  * 200 actualizado, 400 si la validación falla
-- **PATCH**`/users/me/avatar - actualizar avatar (URL válida)
-Body:
-```json
-{ "avatar": "https://example.com/a.jpg" }
-```
- * 200 actualizado, 400 si la URL no cumple la regex
- 
-### Tarjetas
-- **GET** `/cards`  
-  Devuelve la lista completa de tarjetas (200; con populate(['owner', 'likes'])).
-- **POST**`/cards`
-  crear tarjeta
-  Body:
-  ```json
-  {"name": "Golden Gate", "link": "https://upload.wikimedia.org/wikipedia/commons/0/0c/GoldenGateBridge-001.jpg" }
-  ```
-  * owner se toma de req.user._id
-  * 201 creada, 400 si la validación falla
-- **DELETE**`/cards/:cardId - eliminar tarjeta
-  * 200 si se elimina, 400 id inválido, 404 si no existe
-- **PUT**`/cards/:cardId/likes -- dar like (usa $addToSet) -> 200
-- **DELETE**`/cards/:cardId/likes -- quitar like (usa $pull) -> 200
+## Tarjetas. 
+- **GET** `/cards`
+  Lista todas las tarjetas.
+- **POST** `/cards`
+  Crea una nueva tarjeta.
+- **DELETE** `/cards/:cardId`
+  Elimina una tarjeta(solo si es tuya).
+- **PUT** `/cards/:cardId/likes`
+  Da like a una tarjeta.
+- **DELETE** `/cards/:cardId/likes`
+  Quita like de una tarjeta. 
+
+
 
 ### ✅ Validación y manejo de errores
 
-* Mongoose valida longitudes (name, about: 2–30) y URL en avatar/link mediante regex compartida (http/https, www. opcional, ruta válida).
+- **request.log**: registra cada solicitud entrante con método, URL y código de estado.
+- **errors.log**: almacena errores del serividor y validaciones fallidas. 
 
-* 400: ValidationError (datos inválidos), CastError (id mal formado)
-
-* 404: recurso no encontrado (usando .orFail() o error con statusCode = 404)
-
-* 500: error interno genérico
+- **Errores comunes**:
+  - 400 -> Datos inválidos o formato incorrecto. 
+  - 401 -> Token ausente o inválido.
+  - 403 -> Acción no permitida.
+  - 404 -> Recurso no encontrado.
+  - 409 -> Registro duplicado.
+  - 500 -> Error interno del servidor.
 
 ## ▶️ Cómo ejecutar
 Requisitos
@@ -131,29 +193,22 @@ npm start
 ```
 # Servidor en http://localhost:3000
 
-🧪 Postman (sugerencia)
-# Enviroment:
- * baseUrl = http://localhost:3000/users
-
-# Test para guardar IDs automáticamente:
-```js
-// En POST / users (Tests)
-pm.environment.set('userId', pm.response.json()._id);
-
-// En POST / cards (Test)
-pm.environment.set('cardId', pm.response.json()._id);
-```
-* Usar variables en URLs:
+## 🔐 Variables de entorno(.env)
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
 ```bash
-{{baseUrl}}/users
-{{baseUrl}}/users/{{userId}}
-{{baseUrl}}/cards/{{cardId}}/likes
+PORT=3000
+MONGO_URL=mongodb://localhost:27017/aroundb
+JWT_SECRET=dev-secret
+NODE_ENV=development
 ```
 
-✅ Linter
-
-npm run lint
+## ☁️Despliegue
+El backend puede desplegarse en plataformas como:
+* Render
+* Railway
+* Google Cloud Compute Engine
+* PM2 + Nginx (para dominios con HTTPS)
 
 ## ✍️ Autora 
 
@@ -161,3 +216,5 @@ Lina Castro - Full Stack Dev Jr.
 LinkedIn: https://www.linkedin.com/in/lina-castro079/
 
 GitHub: https://github.com/Lina079
+
+
