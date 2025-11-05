@@ -13,6 +13,28 @@ Aplicación web full-stack que permite a los usuarios compartir lugares favorito
 
 ---
 
+## 📸 Capturas de Pantalla
+
+### Registro de Usuario
+![Registro](docs/screenshots/Registro.png)
+![Registro Exitoso](docs/screenshots/Registro-exitoso.png)
+
+### Galería Principal
+![Galería con Tarjetas](docs/screenshots/Galeria-Principal.png)
+
+### Funcionalidad de Likes
+![Sistema de Likes](docs/screenshots/Likes-ok.png)
+
+### Edición de Perfil
+![Editar Perfil](docs/screenshots/Editar-Perfil.png)
+![Perfil Actualizado](docs/screenshots/Nuevo-Perfil.png)
+
+### Crear Nueva Tarjeta
+![Creando Tarjeta](docs/screenshots/Creando-una-nueva-tarjeta.png)
+![Tarjeta Creada](docs/screenshots/tarjeta-nueva-creada.png)
+
+---
+
 ## 📋 Descripción
 
 Postland es una red social donde usuarios registrados pueden:
@@ -98,6 +120,8 @@ web_project_api_full/
 │   │   └── contexts/
 │   ├── dist/ (archivos compilados)
 │   └── package.json
+├── docs/
+│   └── screenshots/
 └── README.md
 ```
 
@@ -284,7 +308,3 @@ Este proyecto fue desarrollado como parte del **Sprint 18 del Bootcamp de Desarr
 
 ---
 
-## 📜 Licencia
-
-Este proyecto es de código abierto y está disponible para fines educativos.
-EOF
