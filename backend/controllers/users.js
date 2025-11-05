@@ -144,7 +144,7 @@ module.exports.login = async (req, res, next) => {
 
     const token = jwt.sign(
       { _id: user._id },
-      process.env.JWT_SECRET || 'dev-secret',
+      process.env.JWT_SECRET.trim(),
       { expiresIn: '7d' },
     );
 
